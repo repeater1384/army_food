@@ -39,10 +39,19 @@ def after_treatment_all_food(_all_food, _type=None):  # 아침/점심/저녁에�
     if _type is None:
         return
 
-    return [temp[_type] for temp in _all_food]
+    return [temp[_type] for temp in _all_food if temp[_type]]
 
 
 result_data = get_result_data_with_json_file('제3389부대 식단 정보_월별.json', month=11)
 
 # 아침 = brst / 점심 = lunc / 저녁 = dinr
-print(after_treatment_all_food(get_all_food_of_date(_result_data=result_data, _date='2020-11-04'), _type='lunc'))
+
+all_result = {}
+for _date in range(1, 31):
+    for when in ['brst', 'lunc', 'dinr']:
+        cur_date = datetime.datetime(2020, 11, _date).strftime('%Y-%m-%d')
+        all_result[cur_date + ' ' + when] = after_treatment_all_food(
+            get_all_food_of_date(_result_data=result_data, _date=cur_date), _type=when)
+
+for key in all_result.keys():
+    print(f"'{key}':{all_result[key]},")
